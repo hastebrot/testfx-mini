@@ -1,0 +1,33 @@
+language: java
+
+# required for oraclejdk10.
+# see: https://github.com/travis-ci/travis-ci/issues/5520
+sudo: required
+dist: trusty
+group: edge
+
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+
+matrix:
+  allow_failures:
+    - jdk: oraclejdk10
+
+# avoid uploading the cache after every build.
+# see: https://docs.travis-ci.com/user/languages/java/#caching
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+install: ./gradlew wrapper
+
+script:
+  - java -version
+  - ./gradlew -version
+  - ./gradlew clean check
